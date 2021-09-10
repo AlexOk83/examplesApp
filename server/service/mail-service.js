@@ -1,6 +1,30 @@
-class MailService {
-    async sendActivationMail(to, link) {
+const nodemailer = require('nodemailer');
 
+class MailService {
+    constructor() {
+        this.trasporter = nodemailer.createTransport({
+            host: process.env.SMTP_HOST,
+            port: process.env.SMTP_PORT,
+            secure: false,
+            auth: {
+                user: process.env.SMTP_USER,
+                pass: process.env.SMTP_PASSWORD
+            }
+        })
+    }
+    async sendActivationMail(to, link) {
+        await this.trasporter.sendMail({
+            from: process.env.SMTP_USER,
+            to,
+            subject: 'Активация аккаунта на ' + process.env.API_URL,
+            text: '',
+            html:
+            `
+                <div>
+                    <h1>Для активации перейдите по <a href="${link}">ссылке</a></h1>
+                </div> 
+            `
+        })
     }
 }
 
